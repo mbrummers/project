@@ -1,0 +1,73 @@
+import csv
+import matplotlib.pyplot as plot
+
+
+with open('2019_car_sale.csv', 'r') as csv_file:
+    csv_reader = csv.reader(csv_file)
+
+    next(csv_file)
+    contract_date = []
+    car_model = []
+    car_brand = []
+    safety_rating = []
+    car_colors = []
+    sales = []
+    states = []
+    for line in csv_reader:
+        contract_date.append(line[1])
+        sales.append(line[5])
+        states.append(line[3])
+        if line[0] in car_model:
+            pass
+        else:
+            car_model.append(line[0])
+        if line[2] in car_brand:
+            pass
+        else:
+            car_brand.append(line[2])
+        if line[4] in safety_rating:
+            pass
+        else:
+            safety_rating.append(line[4])
+
+        if line[6] in car_colors:
+            pass
+        else:
+            car_colors.append(line[6])
+
+
+def sales_by_state(state, states, sale):
+    '''This function calculates the amount of sale contributed by each state.'''
+    state_sales = 0
+    for i in range(679):
+        if state in states[i]:
+            state_sales += sales[i]
+    return state_sales
+
+
+total_sales = 0
+for i in range(len(sales)):
+    sales[i] = int(sales[i].replace(',', ""))
+for i in range(679):
+    total_sales += sales[i]
+
+fl_sales = sales_by_state('Florida', states, sales)
+oh_sales = sales_by_state('Ohio', states, sales)
+tx_sales = sales_by_state('Texas', states, sales)
+nv_sales = sales_by_state('Nevada', states, sales)
+ca_sales = sales_by_state('California', states, sales)
+
+print(f"{'='*15}Dataset Details{'='*15}\n")
+print(f"Total number of deals: {len(contract_date)}")
+print(f"Number of different car models: {len(car_model)}")
+print(f"Number of different car brands: {len(car_brand)}")
+print(f"Number of different car safety ratings: {len(safety_rating)}")
+print(f"Number of different car colors: {len(car_colors)}")
+print(f"Total sales amount: {total_sales}")
+print(f"\n{'='*45}")
+
+barchart = plot.bar(['Texas', 'California', 'Florida', 'Ohio', 'Nevada'], [tx_sales, ca_sales, fl_sales, oh_sales, nv_sales], align='center', alpha=0.9)
+plot.xlabel('States')
+plot.ylabel('Sales ($)')
+plot.title('Amount of Sale Per State')
+print(f"Most number of cars sold ({fl_sales}) was in Florida.")
