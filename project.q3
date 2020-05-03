@@ -1,6 +1,28 @@
-File: project.q3.py
-Author:
-Date:
-E-mail:
-Description:
+import csv
+import matplotlib.pyplot as pt
 
+with open('2019_car_sale.csv', 'r') as csv_file:
+    csv_reader = csv.reader(csv_file)
+    
+    next(csv_file)
+    
+    months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
+              6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'Ocotber',
+              11: 'November', 12: 'December'}
+    sales_by_month = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0,
+                      10: 0, 11: 0, 12: 0}
+    for line in csv_reader:
+        contract_date = line[1].split('/')
+        contract_month = int(contract_date[0])
+        sale_amount = line[5].split(',')
+        sale_amount = int(sale_amount[0] + sale_amount[1])
+        sales_by_month[contract_month] +=sale_amount
+   
+pt.plot(list(months.values()), list(sales_by_month.values()))
+pt.xlabel('Month', fontsize = '7')
+pt.xticks(fontsize = '5')
+pt.ylabel('Amount of sale', fontsize = '7')
+pt.yticks(fontsize = '5')
+pt.title('Amount of sales in different months', fontsize = '7')
+print('Highest Sales amount was in April.' )
+pt.show()
