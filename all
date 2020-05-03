@@ -74,6 +74,13 @@ def month_dictionary():
     return dictionary
 
 
+def contract_date():
+    '''This function returns the month in which that car was sold'''
+    contract_date = details[i][1].split('/')
+    contract_date = int(contract_date[0])
+    return contract_date
+    
+
 details = []
 with open('2019_car_sale.csv', 'r') as csv_file:
     csv_reader = csv.reader(csv_file)
@@ -121,31 +128,25 @@ plot.show()
 print(f"\nMost number of cars sold ({fl_total}) was in Florida.")
 
 # Question 3
-jan_total = monthly_sales(details, 1)
-feb_total = monthly_sales(details, 2)
-mar_total = monthly_sales(details, 3)
-apr_total = monthly_sales(details, 4)
-may_total = monthly_sales(details, 5)
-jun_total = monthly_sales(details, 6)
-jul_total = monthly_sales(details, 7)
-aug_total = monthly_sales(details, 8)
-sep_total = monthly_sales(details, 9)
-oct_total = monthly_sales(details, 10)
-nov_total = monthly_sales(details, 11)
-dec_total = monthly_sales(details, 12)
-
-plot.figure(2)
-months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-          'September', 'October', 'November', 'December']
-plot.plot(list(months), [jan_total, feb_total, mar_total, apr_total, may_total,
-                         jun_total, jul_total, aug_total, sep_total, oct_total, nov_total, dec_total])
-plot.xlabel('Month', fontsize='9')
-plot.ylabel('Amount of Sale', fontsize='9')
-plot.xticks(fontsize='6')
-plot.yticks(fontsize='6')
-plot.title('Amount of Sale in Different Months of 2019', fontsize='9')
+month_and_numeric = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 
+                     6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'Ocotber', 
+                     11: 'November', 12: 'December'}
+sales_by_month = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 
+                  10: 0, 11: 0, 12: 0}
+for i in range(len(details)):
+    contract_date()
+    sales_by_month[contract_date] += sales
+    
+plot.figure(2)   
+plot.plot(list(month_and_numeric.values()), list(sales_by_month.values()))
+plot.xlabel('Month', fontsize = '7')
+plot.xticks(fontsize = '5')
+plot.ylabel('Amount of sale', fontsize = '7')
+plot.yticks(fontsize = '5')
+plot.title('Amount of sales in different months', fontsize = '7')
 plot.show()
 
+apr_total = monthly_sales(details, 4)
 print(f"Maximum amount of sale ({apr_total}) was in April.")
 print(f"\n{'='*45}")
 
@@ -188,10 +189,11 @@ california = month_dictionary()
 florida = month_dictionary()
 ohio = month_dictionary()
 nevada = month_dictionary()
+months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+          'September', 'October', 'November', 'December']
 
 for i in range(len(details)):
-    contract_date = details[i][1].split('/')
-    contract_date = int(contract_date[0])
+    contract_date()
     contract_date = months[contract_date - 1]
     if details[i][3] == 'Texas':
         texas[contract_date] += sales[i]
