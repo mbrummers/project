@@ -32,17 +32,6 @@ def sub_lists(data_list, x, repeat):
             sub_list.append(data_list[i][x])
     return sub_list
 
-
-def sales_by_state(individual_state, data_list):
-    '''This function separates the amount of sale contributed by each state from the
-    original data set.'''
-    state_sales = []
-    for i in range(len(data_list)):
-        if individual_state in data_list[i][3]:
-            state_sales.append(data_list[i][5])
-    return state_sales
-
-
 def sum_total(string_list):
     '''This function changes sale lists into integer lists and sums each index to get 
     the total amount of sale produced by the given list.'''
@@ -107,25 +96,18 @@ print(f"Total sales amount: {total_sales}")
 print(f"\n{'='*45}")
 
 # Question 2
-fl_sales = sales_by_state('Florida', details)
-fl_total = sum_total(fl_sales)
-oh_sales = sales_by_state('Ohio', details)
-oh_total = sum_total(oh_sales)
-tx_sales = sales_by_state('Texas', details)
-tx_total = sum_total(tx_sales)
-nv_sales = sales_by_state('Nevada', details)
-nv_total = sum_total(nv_sales)
-ca_sales = sales_by_state('California', details)
-ca_total = sum_total(ca_sales)
+state_dict = {'Texas': 0, 'California': 0, 'Florida': 0, 'Ohio': 0, 'Nevada': 0}
+for i in range(len(states)):
+    state_dict[states[i]] += sales[i]
 
 plot.figure(1)
-plot.bar(['Texas', 'California', 'Florida', 'Ohio', 'Nevada'], [tx_total, ca_total, fl_total, oh_total, nv_total], align='center', alpha=0.9)
+plot.bar(state_dict.keys(), state_dict.values(), align='center', alpha=0.9)
 plot.xlabel('States')
 plot.ylabel('Sales ($)')
 plot.title('Amount of Sale Per State')
 plot.show()
 
-print(f"\nMost number of cars sold ({fl_total}) was in Florida.")
+print(f"\nMost number of cars sold ({state_dict['Florida']}) was in Florida.")
 
 # Question 3
 month_and_numeric = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 
@@ -146,7 +128,7 @@ plot.title('Amount of sales in different months', fontsize = '7')
 plot.show()
 
 apr_total = monthly_sales(details, 4)
-print(f"Maximum amount of sale ({apr_total}) was in April.")
+print(f"Maximum amount of sale ({sales_by_month[4]}) was in April.")
 print(f"\n{'='*45}")
 
 
@@ -159,7 +141,7 @@ brand_sales_sorted = {}
 
 for i in range(len(details)):
     if details[i][2] in brand_sales:
-        brand_sales[details[i][2]] = brand_sales[details[i][2]] + sales[i]
+        brand_sales[details[i][2]] += sales[i]
     else:
         brand_sales[details[i][2]] = sales[i]
 others_maximum = total_sales * .04
