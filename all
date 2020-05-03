@@ -1,0 +1,220 @@
+# File: dealership_manager.py
+# Authors: Madison Brummerstedt, Kristen Marais, Ethan McDonald
+# Date: 04/25/20
+# E-mail: mbrummers@tamu.edu, kristenmaraisss@tamu.edu, emcdonald17@tamu.edu
+# Description: Project name: Data Cruchers
+# This project reads the 2019_car_sale.csv and provides details of the
+# dataset such as the number of deals, number of different car models, number of
+# different car brands, number of different safety ratings, number of different
+# car colors and the total amount of sales. The project also outputs 4 different plots.
+# The first plot is a bar graph that displays amount of sale per state. The second
+# plot is a line graph that displays the amount of sale per month. The third plot
+# is a pie chart that displays the percent sales amount per car brand. Finally,
+# the last plot is a line graph that displays the sales amount in each state over
+# the year 2019.
+
+import csv
+import matplotlib.pyplot as plot
+
+
+def sub_lists(data_list, x, repeat):
+    '''This function creates sub lists of individual components 
+    from the original data set.'''
+    sub_list = []
+    if repeat == False:
+        for i in range(len(data_list)):
+            if data_list[i][x] in sub_list:
+                continue
+            else:
+                sub_list.append(data_list[i][x])
+    if repeat == True:
+        for i in range(len(data_list)):
+            sub_list.append(data_list[i][x])
+    return sub_list
+
+
+def sales_by_state(individual_state, data_list):
+    '''This function separates the amount of sale contributed by each state from the
+    original data set.'''
+    state_sales = []
+    for i in range(len(data_list)):
+        if individual_state in data_list[i][3]:
+            state_sales.append(data_list[i][5])
+    return state_sales
+
+
+def sum_total(string_list):
+    '''This function changes sale lists into integer lists and sums each index to get 
+    the total amount of sale produced by the given list.'''
+    total = 0
+    for i in range(len(string_list)):
+        string_list[i] = int(string_list[i].replace(',', ""))
+    for i in range(len(string_list)):
+        total += string_list[i]
+    return total
+
+
+def monthly_sales(data_list, x):
+    '''This function separates the sales by month using the original data set.'''
+    month_sales = []
+    for i in range(len(data_list)):
+        date = data_list[i][1].split('/')
+        month = int(date[0])
+        if x == month:
+            month_sales.append(data_list[i][5])
+    month_total = sum_total(month_sales)
+    return month_total
+
+
+def month_dictionary():
+    '''This function creates a dictionary with the months of the year as keys.'''
+    dictionary = {'January': 0, 'February': 0, 'March': 0, 'April': 0, 'May': 0,
+                  'June': 0, 'July': 0, 'August': 0, 'September': 0, 'October': 0,
+                  'November': 0, 'December': 0}
+    return dictionary
+
+
+def get_contract_date(input_line):
+    '''This function returns the month in which that car was sold'''
+    contract_date = input_line[1].split('/')
+    contract_date = int(contract_date[0])
+    return contract_date
+
+
+details = []
+with open('2019_car_sale.csv', 'r') as csv_file:
+    csv_reader = csv.reader(csv_file)
+    next(csv_file)
+    for line in csv_reader:
+        details.append(line)
+
+car_model = sub_lists(details, 0, False)
+car_brand = sub_lists(details, 2, False)
+safety_rating = sub_lists(details, 4, False)
+color = sub_lists(details, 6, False)
+sales = sub_lists(details, 5, True)
+states = sub_lists(details, 3, True)
+total_sales = sum_total(sales)
+
+# Question 1
+print(f"{'='*15}Dataset Details{'='*15}\n")
+print(f"Total number of deals: {len(details)}")
+print(f"Number of different car models: {len(car_model)}")
+print(f"Number of different car brands: {len(car_brand)}")
+print(f"Number of different car safety ratings: {len(safety_rating)}")
+print(f"Number of different car colors: {len(color)}")
+print(f"Total sales amount: {total_sales}")
+print(f"\n{'='*45}")
+
+# Question 2
+fl_sales = sales_by_state('Florida', details)
+fl_total = sum_total(fl_sales)
+oh_sales = sales_by_state('Ohio', details)
+oh_total = sum_total(oh_sales)
+tx_sales = sales_by_state('Texas', details)
+tx_total = sum_total(tx_sales)
+nv_sales = sales_by_state('Nevada', details)
+nv_total = sum_total(nv_sales)
+ca_sales = sales_by_state('California', details)
+ca_total = sum_total(ca_sales)
+
+plot.figure(1)
+plot.bar(['Texas', 'California', 'Florida', 'Ohio', 'Nevada'], [tx_total, ca_total, fl_total, oh_total, nv_total], align='center', alpha=0.9)
+plot.xlabel('States')
+plot.ylabel('Sales ($)')
+plot.title('Amount of Sale Per State')
+plot.show()
+
+print(f"\nMost number of cars sold ({fl_total}) was in Florida.")
+
+# Question 3
+month_and_numeric = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 
+                     6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'Ocotber', 
+                     11: 'November', 12: 'December'}
+sales_by_month = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 
+                  10: 0, 11: 0, 12: 0}
+for i in range(len(details)):
+    sales_by_month[get_contract_date(details[i])] += sales[i]
+
+plot.figure(2)   
+plot.plot(list(month_and_numeric.values()), list(sales_by_month.values()))
+plot.xlabel('Month', fontsize = '7')
+plot.xticks(fontsize = '5')
+plot.ylabel('Amount of sale', fontsize = '7')
+plot.yticks(fontsize = '5')
+plot.title('Amount of sales in different months', fontsize = '7')
+plot.show()
+
+apr_total = monthly_sales(details, 4)
+print(f"Maximum amount of sale ({apr_total}) was in April.")
+print(f"\n{'='*45}")
+
+
+# Question 4
+print("\n========Amount of sale based on car brands========")
+print()
+brand_sales = {}
+brand_sales_final = {}
+brand_sales_sorted = {}
+
+for i in range(len(details)):
+    if details[i][2] in brand_sales:
+        brand_sales[details[i][2]] = brand_sales[details[i][2]] + sales[i]
+    else:
+        brand_sales[details[i][2]] = sales[i]
+others_maximum = total_sales * .04
+brand_sales_final['Others'] = 0
+for key, val in brand_sales.items():
+    if val > others_maximum:
+        brand_sales_final[key] = val
+    else:
+        brand_sales_final['Others'] = brand_sales_final['Others'] + val
+for brand in sorted(brand_sales_final, key=brand_sales_final.get, reverse=True):
+    brand_sales_sorted[brand] = brand_sales_final[brand]
+for key, val in brand_sales_sorted.items():
+    val = val / total_sales
+    percentage = '{:.2%}'.format(val)
+    print(f"{key} : {percentage}")
+print(f"\n{'='*45}")
+labels = brand_sales_sorted.keys()
+sizes = brand_sales_sorted.values()
+plot.figure(3)
+plot.pie(sizes, labels=labels, autopct='%1.1f%%')
+plot.show()
+
+# Question 5
+texas = month_dictionary()
+california = month_dictionary()
+florida = month_dictionary()
+ohio = month_dictionary()
+nevada = month_dictionary()
+months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+          'September', 'October', 'November', 'December']
+
+for i in range(len(details)):
+    contract_date = get_contract_date(details[i])
+    contract_date = months[contract_date - 1]
+    if details[i][3] == 'Texas':
+        texas[contract_date] += sales[i]
+    elif details[i][3] == 'California':
+        california[contract_date] += sales[i]
+    elif details[i][3] == 'Florida':
+        florida[contract_date] += sales[i]
+    elif details[i][3] == 'Ohio':
+        ohio[contract_date] += sales[i]
+    elif details[i][3] == 'Nevada':
+        nevada[contract_date] += sales[i]
+
+plot.figure(4)
+plot.plot(list(texas.keys()), list(texas.values()), label='Texas', color='blue', linewidth='.7')
+plot.plot(list(california.keys()), list(california.values()), label='California', color='gold', linewidth='.7')
+plot.plot(list(florida.keys()), list(florida.values()), label='Florida', color='green', linewidth='.7')
+plot.plot(list(ohio.keys()), list(ohio.values()), label='Ohio', color='red', linewidth='.7')
+plot.plot(list(nevada.keys()), list(nevada.values()), label='Nevada', color='purple', linewidth='.7')
+plot.xlabel('Month', fontsize='9')
+plot.xticks(fontsize='6')
+plot.yticks(fontsize='6')
+plot.ylabel('Amount of Sale', fontsize='9')
+plot.title('Amount of sale in different months in each state', fontsize='9')
+plot.legend(loc='upper right', fontsize='7')
+plot.show()
