@@ -74,9 +74,9 @@ def month_dictionary():
     return dictionary
 
 
-def contract_date():
+def get_contract_date(input_line):
     '''This function returns the month in which that car was sold'''
-    contract_date = details[i][1].split('/')
+    contract_date = input_line[1].split('/')
     contract_date = int(contract_date[0])
     return contract_date
     
@@ -134,8 +134,7 @@ month_and_numeric = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'Ma
 sales_by_month = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 
                   10: 0, 11: 0, 12: 0}
 for i in range(len(details)):
-    contract_date()
-    sales_by_month[contract_date] += sales
+    sales_by_month[get_contract_date(details[i])] += sales[i]
     
 plot.figure(2)   
 plot.plot(list(month_and_numeric.values()), list(sales_by_month.values()))
@@ -193,7 +192,7 @@ months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Augus
           'September', 'October', 'November', 'December']
 
 for i in range(len(details)):
-    contract_date()
+    contract_date = get_contract_date(details[i])
     contract_date = months[contract_date - 1]
     if details[i][3] == 'Texas':
         texas[contract_date] += sales[i]
